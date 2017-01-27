@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team5002.robot.commands.Teleop;
+import org.usfirst.frc.team5002.robot.commands.HackedUpDriving;
 import org.usfirst.frc.team5002.robot.commands.KillDrivetrain;
 import org.usfirst.frc.team5002.robot.commands.PIDSteerTestSingle;
 import org.usfirst.frc.team5002.robot.commands.SteerTestVbus;
@@ -107,7 +108,8 @@ public class Robot extends IterativeRobot {
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
 		
-		Teleop teleCmd = new Teleop();
+		//Teleop teleCmd = new Teleop();
+		HackedUpDriving teleCmd = new HackedUpDriving();
 		Scheduler.getInstance().add(teleCmd);
 	}
 

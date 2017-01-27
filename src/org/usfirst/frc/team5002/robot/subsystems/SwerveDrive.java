@@ -23,10 +23,10 @@ public class SwerveDrive extends Subsystem {
     }
 
     // The actual steer motors...
-    private CANTalon fl_steer;
-    private CANTalon fr_steer;
-    private CANTalon bl_steer;
-    private CANTalon br_steer;
+    public CANTalon fl_steer;
+    public CANTalon fr_steer;
+    public CANTalon bl_steer;
+    public CANTalon br_steer;
 
     // The main drive motors...
     private CANTalon fl_drive;
@@ -34,15 +34,15 @@ public class SwerveDrive extends Subsystem {
     private CANTalon bl_drive;
     private CANTalon br_drive;
 
-	private static boolean reverse_fl_steer = true;
-	private static boolean reverse_fr_steer = true;
+	private static boolean reverse_fl_steer = false;
+	private static boolean reverse_fr_steer = false;
 	private static boolean reverse_bl_steer = false;
 	private static boolean reverse_br_steer = false;
 
 	private static boolean reverse_fl_drive = false;
-	private static boolean reverse_fr_drive = false;
+	private static boolean reverse_fr_drive = true;
 	private static boolean reverse_bl_drive = false;
-	private static boolean reverse_br_drive = false;
+	private static boolean reverse_br_drive = true;
 
 	public SwerveDrive() {
     	/* Init steer (swerve? motor-turner?) motors */
@@ -74,7 +74,8 @@ public class SwerveDrive extends Subsystem {
     	srx.setFeedbackDevice(FeedbackDevice.AnalogEncoder);
     	srx.configPotentiometerTurns(1);
 		srx.setProfile(0);
-    	srx.set(0); // Reset to initial position
+		srx.setPosition(0);
+    	//srx.set(0); // Reset to initial position
     }
 
     /* Testing only! */

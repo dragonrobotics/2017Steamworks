@@ -17,11 +17,11 @@ public class OI {
 	}
 	
 	public double getForwardAxis() {
-		return arcadeStick.getX();//allows the Joystick to command the Robot's forwards and backwards movement
+		return arcadeStick.getY();//allows the Joystick to command the Robot's forwards and backwards movement
 	}
 	
 	public double getHorizontalAxis(){
-		return arcadeStick.getY();//allows the Joystick to command the Robot's side to side movement
+		return arcadeStick.getX();//allows the Joystick to command the Robot's side to side movement
 	}
 	
 	public double getTurnAxis(){
