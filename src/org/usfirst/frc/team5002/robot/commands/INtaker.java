@@ -2,6 +2,7 @@
 package org.usfirst.frc.team5002.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team5002.robot.Robot;
 
@@ -16,6 +17,7 @@ public class INtaker extends Command {
     }
 
     protected void initialize() {		//Makes motor start at 0
+    	SmartDashboard.putBoolean("Intaker", true);
     }
 
     protected void execute() {
@@ -31,6 +33,7 @@ public class INtaker extends Command {
     // Called once after isFinished returns true
     protected void end() {
     	Robot.intake.stop();
+    	SmartDashboard.putBoolean("Intaker", false);
     }
 
     // Called when another command which requires one or more of the same

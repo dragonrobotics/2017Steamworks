@@ -10,6 +10,7 @@ import org.usfirst.frc.team5002.robot.commands.TakeOuter;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
  */
 public class OI {
 	public Joystick arcadeStick; //named Joystick
+	
 	
 	public OI(){
 		arcadeStick = new Joystick(0); //gave Joystick a job
@@ -34,8 +36,10 @@ public class OI {
 		
 		Y.toggleWhenActive(new ClimbUp());//turns the climb motor on while Y is being held, but reverses the motor while the button is held down the second time (for emergencies)
 		B.toggleWhenPressed(new LaunchererC());//turns launcher motor on when B is pressed once, and off when B is pressed again
+
 		A.toggleWhenPressed(new INtaker()); //turns the intake motor on when A is pressed once, and off when A is pressed again
 		A.toggleWhenPressed(new OUTtaker()); //turns the outake motor on at the same time as the intake motor
+		
 		LB.whileHeld(new TakeOuter()); // reverses outtake motor
 		LB.whileHeld(new ReverseInTaker());// reverse intake motor
 	}
