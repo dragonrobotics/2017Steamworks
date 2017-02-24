@@ -16,6 +16,7 @@ import org.usfirst.frc.team5002.robot.commands.Teleop;
 import org.usfirst.frc.team5002.robot.commands.KillDrivetrain;
 import org.usfirst.frc.team5002.robot.commands.PIDSteerCollective;
 import org.usfirst.frc.team5002.robot.commands.PIDSteerTestSingle;
+import org.usfirst.frc.team5002.robot.commands.SteerTestVbus;
 import org.usfirst.frc.team5002.robot.subsystems.Intake;
 import org.usfirst.frc.team5002.robot.subsystems.Launcherer;
 import org.usfirst.frc.team5002.robot.subsystems.Outtake;
@@ -62,10 +63,12 @@ public class Robot extends IterativeRobot {
 		}
 
 		/* Add PID Test commands. */
+		/*
 		SmartDashboard.putData("PIDSteerTest-FrontLeft", new PIDSteerTestSingle(drivetrain.fl_steer));
 		SmartDashboard.putData("PIDSteerTest-FrontRight", new PIDSteerTestSingle(drivetrain.fr_steer));
 		SmartDashboard.putData("PIDSteerTest-BackLeft", new PIDSteerTestSingle(drivetrain.bl_steer));
 		SmartDashboard.putData("PIDSteerTest-BackRight", new PIDSteerTestSingle(drivetrain.br_steer));
+		*/
 	}
 
 	/**
@@ -80,10 +83,12 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void disabledPeriodic() {
+		/*
 		SmartDashboard.putNumber("FL-Pos", Robot.drivetrain.fl_steer.getPosition());
 		SmartDashboard.putNumber("FR-Pos", Robot.drivetrain.fr_steer.getPosition());
 		SmartDashboard.putNumber("BL-Pos", Robot.drivetrain.bl_steer.getPosition());
 		SmartDashboard.putNumber("BR-Pos", Robot.drivetrain.br_steer.getPosition());
+		*/
 		
 		//Robot.drivetrain.UpdateSDSingle(Robot.drivetrain.fr_steer);
 		//Robot.drivetrain.UpdateSDSingle(Robot.drivetrain.fl_steer);
@@ -137,10 +142,15 @@ public class Robot extends IterativeRobot {
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
 
-		//PIDSteerCollective PIDTest = new PIDSteerCollective();
-		Teleop teleopTest = new Teleop();
-		Scheduler.getInstance().add(teleopTest);
-		//Scheduler.getInstance().add(PIDTest);
+		PIDSteerCollective PIDTest = new PIDSteerCollective();
+		Scheduler.getInstance().add(PIDTest);
+		
+		//Teleop teleopTest = new Teleop();
+		//Scheduler.getInstance().add(teleopTest);
+		//
+		
+		//Command test = new SteerTestVbus();
+		//Scheduler.getInstance().add(test);
 	}
 
 	/**

@@ -39,7 +39,7 @@ public class OI {
 		Y.whileHeld(new ClimbUp());//turns the climb motor on while Y is being held
 		RB.whileHeld(new ClimbDown());//turns launcher motor on when B is pressed once, and off when B is pressed again
 
-		A.toggleWhenPressed(new INtaker()); //turns the intake motor on when A is pressed once, and off when A is pressed again
+		//A.toggleWhenPressed(new INtaker()); //turns the intake motor on when A is pressed once, and off when A is pressed again
 		B.toggleWhenPressed(new OUTtaker()); //turns the outake motor on at the same time as the intake motor
 		
 		LB.whileHeld(new TakeOuter()); // emergency reverse for outtake motor

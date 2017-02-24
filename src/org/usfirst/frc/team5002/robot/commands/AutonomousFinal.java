@@ -22,10 +22,7 @@ public class AutonomousFinal extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	/* Set main controls for driving... */
-    	Robot.drivetrain.configureDriveMotorAutonomous(Robot.drivetrain.fl_drive, false);
-    	Robot.drivetrain.configureDriveMotorAutonomous(Robot.drivetrain.fr_drive, false);
-    	Robot.drivetrain.configureDriveMotorAutonomous(Robot.drivetrain.bl_drive, false);
-    	Robot.drivetrain.configureDriveMotorAutonomous(Robot.drivetrain.br_drive, false);
+    	Robot.drivetrain.setDriveAuto();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -36,10 +33,12 @@ public class AutonomousFinal extends Command {
     	
     	
     	//set all the motors in the drivetrain to the variable x, and itll run forward
+    	/*
     	Robot.drivetrain.fl_drive.set(x);
     	Robot.drivetrain.fr_drive.set(x);
     	Robot.drivetrain.bl_drive.set(x);
     	Robot.drivetrain.br_drive.set(x);
+    	*/
     	
     }
 

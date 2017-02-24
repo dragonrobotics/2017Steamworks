@@ -15,16 +15,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class SwerveDrive extends Subsystem {
     // The actual steer motors...
-    public CANTalon fl_steer;
-    public CANTalon fr_steer;
-    public CANTalon bl_steer;
-    public CANTalon br_steer;
+	private CANTalon fl_steer;
+	private CANTalon fr_steer;
+	public CANTalon bl_steer;
+	private CANTalon br_steer;
 
     // The main drive motors...
-    public CANTalon fl_drive;
-    public CANTalon fr_drive;
-    public CANTalon bl_drive;
-    public CANTalon br_drive;
+    private CANTalon fl_drive;
+    private CANTalon fr_drive;
+    private CANTalon bl_drive;
+    private CANTalon br_drive;
 
     /* Steering zero positions:
      *  FL: -0.54,
@@ -42,7 +42,92 @@ public class SwerveDrive extends Subsystem {
      * BR: 24 / 0.0015  / 350 / 0 / 0    / 15
      */
     
-    public static double[] steer_offsets = { -289.0, -49.0, -555.0, 27.0 };
+    /* FrontLeft, FrontRight, BackLeft, BackRight */
+    private double[] steer_offsets = { 133.0, 536.0, 802.0/*814.0*/, 582.0 };
+    private double[] maxEncoderOutput = {881.0, 880.0, 871.0, 882.0};
+    boolean driveReversalStatus[] = {true, false, true, false};
+    
+    public enum ModulePosition {
+    	FL,
+    	FR,
+    	BL,
+    	BR
+    };
+    
+    private double getSteerHack(ModulePosition pos) {
+    	switch(pos) {
+    	case FL:
+    		return maxEncoderOutput[0];
+    	case FR:
+    		return maxEncoderOutput[1];
+    	case BL:
+    		return maxEncoderOutput[2];
+    	case BR:
+    		return maxEncoderOutput[3];
+    	}
+    	
+    	return 1024;
+    }
+    
+    private double getSteerOffset(ModulePosition pos) {
+    	switch(pos) {
+    	case FL:
+    		return steer_offsets[0];
+    	case FR:
+    		return steer_offsets[1];
+    	case BL:
+    		return steer_offsets[2];
+    	case BR:
+    		return steer_offsets[3];
+    	}
+    	
+    	return 0;
+    }
+    
+    private boolean getDriveReverse(ModulePosition pos) {
+    	switch(pos) {
+    	case FL:
+    		return driveReversalStatus[0];
+    	case FR:
+    		return driveReversalStatus[1];
+    	case BL:
+    		return driveReversalStatus[2];
+    	case BR:
+    		return driveReversalStatus[3];
+    	}
+    	
+    	return false;
+    }
+    
+    private CANTalon getSteerController(ModulePosition pos) {
+    	switch(pos) {
+    	case FL:
+    		return fl_steer;
+    	case FR:
+    		return fr_steer;
+    	case BL:
+    		return bl_steer;
+    	case BR:
+    		return br_steer;
+    	}
+    	
+    	return null;
+    }
+    
+    private CANTalon getDriveController(ModulePosition pos) {
+    	switch(pos) {
+    	case FL:
+    		return fl_drive;
+    	case FR:
+    		return fr_drive;
+    	case BL:
+    		return bl_drive;
+    	case BR:
+    		return br_drive;
+    	}
+    	
+    	return null;
+    }
     
 	public SwerveDrive() {
     	/* Init steer (swerve? motor-turner?) motors */
@@ -65,7 +150,7 @@ public class SwerveDrive extends Subsystem {
         /* Drive motor config is left to teleop/auto commands */
     }
 
-    public void configureSteerMotor(CANTalon srx, boolean reverse) {
+    private void configureSteerMotor(CANTalon srx, boolean reverse) {
     	srx.changeControlMode(TalonControlMode.Position);
     	srx.setFeedbackDevice(FeedbackDevice.AnalogEncoder);
     	//srx.configPotentiometerTurns(1);
@@ -75,20 +160,61 @@ public class SwerveDrive extends Subsystem {
 		//srx.set(0.5); // reset to midpoint
     }
     
-    public void configureDriveMotorTeleop(CANTalon srx, boolean reverse) {
+    private void configureDriveMotorTeleop(ModulePosition pos) {
+    	CANTalon srx = getDriveController(pos);
+    	srx.reverseOutput(getDriveReverse(pos));
     	srx.changeControlMode(TalonControlMode.PercentVbus);
     	srx.set(0); // Reset to stopped
-		srx.reverseOutput(reverse);
     }
 
-    public void configureDriveMotorAutonomous(CANTalon srx, boolean reverse) {
+    private void configureDriveMotorAutonomous(ModulePosition pos) {
+    	CANTalon srx = getDriveController(pos);
+    	
     	srx.changeControlMode(TalonControlMode.Position);
     	//control mode is in position
-    	srx.reverseSensor(true);
+    	srx.reverseOutput(getDriveReverse(pos));
     	//making the sensor read positively
     	srx.setFeedbackDevice(FeedbackDevice.QuadEncoder);
     	//making it a quad encoder
     	srx.configEncoderCodesPerRev(40);
+    }
+    
+    public void setDriveOutput(ModulePosition pos, double vout) {
+    	CANTalon drive = getDriveController(pos);
+    	drive.set(vout);
+    }
+    
+    public void setSteerDegrees(ModulePosition pos, double degrees) {
+    	CANTalon steer = getSteerController(pos);
+    	CANTalon drive = getDriveController(pos);
+    	
+    	/*
+    	if(degrees >= 180.0) {
+    		degrees -= 180.0;
+    		drive.reverseOutput(!getDriveReverse(pos));
+    	} else {
+    		drive.reverseOutput(getDriveReverse(pos));
+    	}
+    	*/
+    	
+    	double nativePos = degrees * (getSteerHack(pos) / 360.0);
+    	nativePos += getSteerOffset(pos);
+    	
+    	steer.set(nativePos);
+    }
+    
+    public void setDriveTeleop() {
+    	configureDriveMotorTeleop(ModulePosition.FL);
+    	configureDriveMotorTeleop(ModulePosition.FR);
+    	configureDriveMotorTeleop(ModulePosition.BL);
+    	configureDriveMotorTeleop(ModulePosition.BR);
+    }
+    
+    public void setDriveAuto() {
+    	configureDriveMotorAutonomous(ModulePosition.FL);
+    	configureDriveMotorAutonomous(ModulePosition.FR);
+    	configureDriveMotorAutonomous(ModulePosition.BL);
+    	configureDriveMotorAutonomous(ModulePosition.BR);
     }
 
     public void initDefaultCommand() {
@@ -110,9 +236,27 @@ public class SwerveDrive extends Subsystem {
     	SmartDashboard.putNumber("ADC-BL", bl_steer.getAnalogInRaw());
     	SmartDashboard.putNumber("ADC-BR", br_steer.getAnalogInRaw());
     	
+    	SmartDashboard.putNumber("Pos-FR", fr_steer.getPosition());
+    	SmartDashboard.putNumber("Pos-FL", fl_steer.getPosition());
+    	SmartDashboard.putNumber("Pos-BL", bl_steer.getPosition());
+    	SmartDashboard.putNumber("Pos-BR", br_steer.getPosition());
+    	
+    	SmartDashboard.putNumber("Err-FR", fr_steer.getClosedLoopError());
+    	SmartDashboard.putNumber("Err-FL", fl_steer.getClosedLoopError());
+    	SmartDashboard.putNumber("Err-BL", bl_steer.getClosedLoopError());
+    	SmartDashboard.putNumber("Err-BR", br_steer.getClosedLoopError());
+    	
+    	SmartDashboard.putNumber("AccErr-BL", bl_steer.GetIaccum());
+    	
     	SmartDashboard.putNumber("Pos-DriveFR", fr_drive.getPosition());
     	SmartDashboard.putNumber("Pos-DriveFL", fl_drive.getPosition());
     	SmartDashboard.putNumber("Pos-DriveBL", bl_drive.getPosition());
     	SmartDashboard.putNumber("Pos-DriveBR", br_drive.getPosition());
+    	
+    	SmartDashboard.putNumber("DriveFR Speed", fr_drive.getSpeed());
+    	SmartDashboard.putNumber("DriveFL Speed", fl_drive.getSpeed());
+    	SmartDashboard.putNumber("DriveBL Speed", bl_drive.getSpeed());
+    	SmartDashboard.putNumber("DriveBR Speed", br_drive.getSpeed());
+    	
     }
 }

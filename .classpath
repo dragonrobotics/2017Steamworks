@@ -14,5 +14,8 @@
 			<attribute name="javadoc_location" value="jar:file:/C:/Users/brian/wpilib/user/java/lib/navx_frc.jar!/docs"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="var" path="USERLIBS_DIR/navx_frc.jar"/>
+	<classpathentry kind="var" path="USERLIBS_DIR/protobuf-java-3.1.0.jar"/>
+	<classpathentry kind="var" path="USERLIBS_DIR/TalonSRXLibJava.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

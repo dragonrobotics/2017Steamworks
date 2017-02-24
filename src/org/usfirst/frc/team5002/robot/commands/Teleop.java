@@ -1,6 +1,8 @@
 package org.usfirst.frc.team5002.robot.commands;
 
 import org.usfirst.frc.team5002.robot.Robot;
+import org.usfirst.frc.team5002.robot.subsystems.SwerveDrive;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -72,35 +74,22 @@ public class Teleop extends Command {
 		speeds[2] = maxWs > 1 ? spd_bl / maxWs : spd_bl;
 		speeds[3] = maxWs > 1 ? spd_br / maxWs : spd_br;
 
-		if(Robot.oi.arcadeStick.getMagnitude() <= 0.25) {
-			angles[0] = (c==0 && b==0) ? 0.0 : (Math.atan2(b, c) * 180 / Math.PI); // front right
-			angles[1] = (d==0 && b==0) ? 0.0 : (Math.atan2(b, d) * 180 / Math.PI); // front left
-			angles[2] = (d==0 && a==0) ? 0.0 : (Math.atan2(a, d) * 180 / Math.PI); // back left
-			angles[3] = (c==0 && a==0) ? 0.0 : (Math.atan2(a, c) * 180 / Math.PI); // back right
+		if(Robot.oi.arcadeStick.getMagnitude() <= 0.50) {
+			angles[0] = (c==0 && b==0) ? 0.0 : (Math.atan2(b, c) * 180 / Math.PI); // back right
+			angles[1] = (d==0 && b==0) ? 0.0 : (Math.atan2(b, d) * 180 / Math.PI); // back left
+			angles[2] = (d==0 && a==0) ? 0.0 : (Math.atan2(a, d) * 180 / Math.PI); // front left
+			angles[3] = (c==0 && a==0) ? 0.0 : (Math.atan2(a, c) * 180 / Math.PI); // front right
 		}
 
-		setDrivetrain(angles, speeds);
-	}
-
-	public void setDrivetrain(double[] ang, double[] spd) {
-		double coeff[] = { 1.0, -1.0, -1.0, 1.0 };
+		Robot.drivetrain.setSteerDegrees(SwerveDrive.ModulePosition.BR, angles[0]);
+		Robot.drivetrain.setSteerDegrees(SwerveDrive.ModulePosition.BL, angles[1]);
+		Robot.drivetrain.setSteerDegrees(SwerveDrive.ModulePosition.FL, angles[2]);
+		Robot.drivetrain.setSteerDegrees(SwerveDrive.ModulePosition.FR, angles[3]);
 		
-		for(int i=0;i<4;i++) {
-			if(ang[i] >= 180.0) {
-				coeff[i] *= -1.0;
-				ang[i] -= 180.0;
-			}
-		} 
-		
-		Robot.drivetrain.fr_steer.set(ang[3] * (1024.0 / 360.0) + Robot.drivetrain.steer_offsets[1]);
-		Robot.drivetrain.fl_steer.set(ang[2] * (1024.0 / 360.0) + Robot.drivetrain.steer_offsets[0]);
-		Robot.drivetrain.bl_steer.set(ang[1] * (1024.0 / 360.0) + Robot.drivetrain.steer_offsets[2]);
-		Robot.drivetrain.br_steer.set(ang[0] * (1024.0 / 360.0) + Robot.drivetrain.steer_offsets[3]);
-
-		Robot.drivetrain.fr_drive.set(spd[0] * coeff[0]);
-		Robot.drivetrain.fl_drive.set(spd[1] * coeff[1]);
-		Robot.drivetrain.bl_drive.set(spd[2] * coeff[2]);
-		Robot.drivetrain.br_drive.set(spd[3] * coeff[3]);
+		Robot.drivetrain.setDriveOutput(SwerveDrive.ModulePosition.BR, speeds[0]);
+		Robot.drivetrain.setDriveOutput(SwerveDrive.ModulePosition.BL, speeds[1]);
+		Robot.drivetrain.setDriveOutput(SwerveDrive.ModulePosition.FL, speeds[2]);
+		Robot.drivetrain.setDriveOutput(SwerveDrive.ModulePosition.FR, speeds[3]);
 	}
 
     public Teleop() {
@@ -110,10 +99,7 @@ public class Teleop extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	/* Set main controls for driving... */
-        Robot.drivetrain.configureDriveMotorTeleop(Robot.drivetrain.fl_drive, false);
-        Robot.drivetrain.configureDriveMotorTeleop(Robot.drivetrain.fr_drive, false);
-        Robot.drivetrain.configureDriveMotorTeleop(Robot.drivetrain.bl_drive, false);
-        Robot.drivetrain.configureDriveMotorTeleop(Robot.drivetrain.br_drive, false);
+    	Robot.drivetrain.setDriveTeleop();
     }
 
     // Make this return true when this Command no longer needs to run execute()

@@ -18,7 +18,7 @@ public class RobotMap {
 	// public static int rangefinderModule = 1;
 
 	public static int fl_drive = 15;
-	public static int fl_steer = 4;
+	public static int fl_steer = 10;
 
 	public static int fr_drive = 12;
 	public static int fr_steer = 13;
@@ -27,5 +27,5 @@ public class RobotMap {
 	public static int bl_steer = 1;
 
 	public static int br_drive = 2;
-	public static int br_steer = 10;
+	public static int br_steer = 4;
 }
